@@ -13,6 +13,7 @@ import {
 } from './storage'
 import Report from './Report'
 import Slides from './Slides'
+import CursorBg from './CursorBg'
 import './App.css'
 
 function getPage() {
@@ -68,57 +69,69 @@ function App() {
   }
 
   if (page === 'zapiska') {
-    return <Report onBack={openApp} />
+    return (
+      <>
+        <CursorBg />
+        <Report onBack={openApp} />
+      </>
+    )
   }
 
   if (page === 'slides') {
-    return <Slides onBack={openApp} />
+    return (
+      <>
+        <CursorBg />
+        <Slides onBack={openApp} />
+      </>
+    )
   }
 
   return (
-    <div className="page">
-      <div className="bg-glow" aria-hidden="true" />
-      <header className="header reveal">
-        <div>
-          <p className="header__eyebrow">Учёт финансов</p>
-          <h1 className="header__title">Мой бюджет</h1>
-        </div>
-        <div className="header__right">
-          <button type="button" className="nav-link" onClick={openReport}>
-            Записка
-          </button>
-          <button type="button" className="nav-link" onClick={openSlides}>
-            Презентация
-          </button>
-          <MonthFilter month={month} onChange={setMonth} />
-        </div>
-      </header>
+    <>
+      <CursorBg />
+      <div className="page">
+        <header className="header reveal">
+          <div>
+            <p className="header__eyebrow">учёт расходов</p>
+            <h1 className="header__title">Мой бюджет</h1>
+          </div>
+          <div className="header__right">
+            <button type="button" className="nav-link" onClick={openReport}>
+              Записка
+            </button>
+            <button type="button" className="nav-link" onClick={openSlides}>
+              Презентация
+            </button>
+            <MonthFilter month={month} onChange={setMonth} />
+          </div>
+        </header>
 
-      <Summary operations={operations} month={month} />
+        <Summary operations={operations} month={month} />
 
-      <div className="grid">
-        <TransactionForm onAdd={addOperation} />
-        <CategoryChart operations={operations} month={month} />
+        <div className="grid">
+          <TransactionForm onAdd={addOperation} />
+          <CategoryChart operations={operations} month={month} />
+        </div>
+
+        <TransactionList
+          operations={operations}
+          month={month}
+          onDelete={deleteOperation}
+        />
+
+        <footer className="footer">
+          <p>ОПД · Шиханцов Е. · Камынин Е. · 09.02.11/1094</p>
+          <div className="footer__links">
+            <button type="button" className="footer__link" onClick={openReport}>
+              Записка
+            </button>
+            <button type="button" className="footer__link" onClick={openSlides}>
+              Презентация
+            </button>
+          </div>
+        </footer>
       </div>
-
-      <TransactionList
-        operations={operations}
-        month={month}
-        onDelete={deleteOperation}
-      />
-
-      <footer className="footer">
-        <p>ОПД · Шиханцов Е. · Камынин Е. · 09.02.11/1094</p>
-        <div className="footer__links">
-          <button type="button" className="footer__link" onClick={openReport}>
-            Пояснительная записка
-          </button>
-          <button type="button" className="footer__link" onClick={openSlides}>
-            Презентация
-          </button>
-        </div>
-      </footer>
-    </div>
+    </>
   )
 }
 

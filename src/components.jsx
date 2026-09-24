@@ -1,12 +1,5 @@
 import { useMemo, useState } from 'react'
 import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-} from 'recharts'
-import {
   CATEGORIES,
   formatMoney,
   monthKey,
@@ -15,6 +8,18 @@ import {
 
 function catById(id) {
   return CATEGORIES.find((c) => c.id === id) || CATEGORIES[CATEGORIES.length - 1]
+}
+
+function polar(cx, cy, r, angle) {
+  const a = ((angle - 90) * Math.PI) / 180
+  return [cx + r * Math.cos(a), cy + r * Math.sin(a)]
+}
+
+function arcPath(cx, cy, r, start, end) {
+  const [x1, y1] = polar(cx, cy, r, end)
+  const [x2, y2] = polar(cx, cy, r, start)
+  const large = end - start > 180 ? 1 : 0
+  return `M ${x1} ${y1} A ${r} ${r} 0 ${large} 0 ${x2} ${y2}`
 }
 
 export function Summary({ operations, month }) {
@@ -81,32 +86,29 @@ export function CategoryChart({ operations, month }) {
     <div className="chart-wrap reveal delay-2">
       <h2 className="block-title">Расходы по категориям</h2>
       <div className="chart-box">
-        <ResponsiveContainer width="100%" height={220}>
-          <PieChart>
-            <Pie
-              data={data}
-              dataKey="value"
-              nameKey="name"
-              innerRadius={55}
-              outerRadius={85}
-              paddingAngle={3}
-              stroke="none"
-            >
-              {data.map((item) => (
-                <Cell key={item.name} fill={item.color} />
-              ))}
-            </Pie>
-            <Tooltip
-              formatter={(v) => formatMoney(v)}
-              contentStyle={{
-                borderRadius: 12,
-                border: 'none',
-                boxShadow: '0 8px 24px rgba(20,36,31,0.12)',
-                fontFamily: 'Manrope, sans-serif',
-              }}
-            />
-          </PieChart>
-        </ResponsiveContainer>
+        <svg viewBox="0 0 200 200" className="donut" aria-hidden="true">
+          {(() => {
+            const total = data.reduce((s, d) => s + d.value, 0)
+            let angle = 0
+            return data.map((item) => {
+              const slice = (item.value / total) * 360
+              const start = angle
+              const end = angle + Math.max(slice - 1.5, 0.5)
+              angle += slice
+              return (
+                <path
+                  key={item.name}
+                  d={arcPath(100, 100, 72, start, end)}
+                  fill="none"
+                  stroke={item.color}
+                  strokeWidth="28"
+                  strokeLinecap="butt"
+                />
+              )
+            })
+          })()}
+          <circle cx="100" cy="100" r="48" fill="rgba(7,11,10,0.9)" />
+        </svg>
         <ul className="chart-legend">
           {data.map((item) => (
             <li key={item.name}>
