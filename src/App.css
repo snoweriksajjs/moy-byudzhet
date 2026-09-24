@@ -511,6 +511,13 @@ select {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  flex-wrap: wrap;
+}
+
+a.nav-link {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
 }
 
 .slides-counter {

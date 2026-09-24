@@ -135,6 +135,9 @@ export default function Slides({ onBack }) {
         <button type="button" className="nav-link" onClick={onBack}>
           ← К приложению
         </button>
+        <a className="nav-link" href="/prezentaciya.pdf" download>
+          Скачать PDF
+        </a>
         <p className="slides-counter">
           {index + 1} / {SLIDES.length}
         </p>
