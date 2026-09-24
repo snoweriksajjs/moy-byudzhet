@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Презентация — Мой бюджет</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700&family=Unbounded:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Manrope, sans-serif;
+      background: #e7eee9;
+      color: #14241f;
+    }
+    .slide {
+      width: 297mm;
+      height: 210mm;
+      page-break-after: always;
+      padding: 22mm 24mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .slide:last-child { page-break-after: auto; }
+    .title, .end {
+      background: linear-gradient(155deg, #123d34, #0f6b5c 50%, #1a8f78);
+      color: #f4faf7;
+    }
+    .content {
+      background: linear-gradient(160deg, #f7faf8, #e8f2ec);
+    }
+    .blob {
+      position: absolute;
+      width: 120mm;
+      height: 120mm;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      top: -40mm;
+      right: -30mm;
+    }
+    .content .blob { background: rgba(15,107,92,0.08); }
+    h1 {
+      margin: 0;
+      font-family: Unbounded, sans-serif;
+      font-size: 36pt;
+      letter-spacing: -0.03em;
+      position: relative;
+    }
+    .eyebrow {
+      margin: 0 0 8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 11pt;
+      opacity: 0.8;
+      position: relative;
+    }
+    .sub {
+      margin: 10pt 0 0;
+      font-size: 16pt;
+      opacity: 0.92;
+      position: relative;
+    }
+    ul {
+      list-style: none;
+      margin: 18pt 0 0;
+      padding: 0;
+      position: relative;
+    }
+    li {
+      margin: 0 0 8pt;
+      padding: 10pt 12pt 10pt 28pt;
+      background: rgba(255,255,255,0.72);
+      border-radius: 10pt;
+      font-size: 14pt;
+      font-weight: 700;
+      position: relative;
+    }
+    .title li, .end li { background: rgba(255,255,255,0.12); }
+    li::before {
+      content: '';
+      position: absolute;
+      left: 12pt;
+      top: 50%;
+      width: 7pt;
+      height: 7pt;
+      border-radius: 50%;
+      background: #0f6b5c;
+      transform: translateY(-50%);
+    }
+    .title li::before, .end li::before { background: #f0e2c8; }
+    .meta {
+      margin-top: 18pt;
+      font-size: 13pt;
+      opacity: 0.9;
+      position: relative;
+    }
+    .meta p { margin: 3pt 0; }
+    @page { size: A4 landscape; margin: 0; }
+    @media print {
+      body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <section class="slide title">
+    <div class="blob"></div>
+    <p class="eyebrow">Основы проектной деятельности</p>
+    <h1>Мой бюджет</h1>
+    <p class="sub">Веб-приложение для учёта личных финансов</p>
+    <div class="meta">
+      <p>Шиханцов Егор · Камынин Егор</p>
+      <p>Группа 09.02.11/1094</p>
+      <p>Руководитель: Андреев В.А.</p>
+    </div>
+  </section>
+
+  <section class="slide content">
+    <div class="blob"></div>
+    <h1>Актуальность</h1>
+    <ul>
+      <li>Студентам сложно контролировать расходы</li>
+      <li>Готовые приложения часто перегружены</li>
+      <li>Нужен простой учёт прямо в браузере</li>
+    </ul>
+  </section>
+
+  <section class="slide content">
+    <div class="blob"></div>
+    <h1>Цель и задачи</h1>
+    <ul>
+      <li>Цель: веб-приложение «Мой бюджет»</li>
+      <li>Учёт доходов и расходов по категориям</li>
+      <li>Сводка за месяц и диаграмма</li>
+      <li>Сохранение данных в браузере</li>
+    </ul>
+  </section>
+
+  <section class="slide content">
+    <div class="blob"></div>
+    <h1>Объект и предмет</h1>
+    <ul>
+      <li>Объект — учёт личных финансов</li>
+      <li>Предмет — веб-интерфейс и логика отчётов</li>
+      <li>Методы: анализ аналогов, React, тестирование</li>
+    </ul>
+  </section>
+
+  <section class="slide content">
+    <div class="blob"></div>
+    <h1>Анализ аналогов</h1>
+    <ul>
+      <li>Excel — гибко, но неудобный интерфейс</li>
+      <li>CoinKeeper / Дзен-мани — много лишнего</li>
+      <li>Telegram-боты — быстрый ввод, слабые отчёты</li>
+      <li>Наше решение — простота + наглядность</li>
+    </ul>
+  </section>
+
+  <section class="slide content">
+    <div class="blob"></div>
+    <h1>Стек технологий</h1>
+    <ul>
+      <li>React — интерфейс</li>
+      <li>Vite — сборка проекта</li>
+      <li>Recharts — диаграмма расходов</li>
+      <li>localStorage — сохранение данных</li>
+    </ul>
+  </section>
+
+  <section class="slide content">
+    <div class="blob"></div>
+    <h1>Возможности</h1>
+    <ul>
+      <li>Добавление дохода и расхода</li>
+      <li>Категории, дата, комментарий</li>
+      <li>Фильтр по месяцу</li>
+      <li>Баланс и круговая диаграмма</li>
+    </ul>
+  </section>
+
+  <section class="slide content">
+    <div class="blob"></div>
+    <h1>Практическая часть</h1>
+    <ul>
+      <li>Форма новой операции</li>
+      <li>История с удалением записей</li>
+      <li>Пересчёт сводки при изменениях</li>
+      <li>Данные сохраняются после обновления</li>
+    </ul>
+  </section>
+
+  <section class="slide content">
+    <div class="blob"></div>
+    <h1>Тестирование</h1>
+    <ul>
+      <li>Добавление расхода и дохода — ок</li>
+      <li>Смена месяца — ок</li>
+      <li>Удаление операции — ок</li>
+      <li>Проверка пустой суммы — ок</li>
+    </ul>
+  </section>
+
+  <section class="slide content">
+    <div class="blob"></div>
+    <h1>Результаты</h1>
+    <ul>
+      <li>Цель достигнута</li>
+      <li>Работает учёт и отчётность</li>
+      <li>Подготовлены записка и презентация</li>
+      <li>Проект готов к защите</li>
+    </ul>
+  </section>
+
+  <section class="slide end">
+    <div class="blob"></div>
+    <h1>Спасибо за внимание</h1>
+    <p class="sub">Вопросы?</p>
+    <div class="meta">
+      <p>Шиханцов Егор · Камынин Егор</p>
+      <p>09.02.11/1094</p>
+    </div>
+  </section>
+</body>
+</html>
