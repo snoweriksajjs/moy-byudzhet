@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
 import {
   CATEGORIES,
+  MAX_AMOUNT,
   formatMoney,
+  parseAmount,
   monthKey,
   currentMonth,
 } from './storage'
@@ -28,10 +30,18 @@ export function Summary({ operations, month }) {
     let expense = 0
     for (const op of operations) {
       if (monthKey(op.date) !== month) continue
-      if (op.type === 'income') income += op.amount
-      else expense += op.amount
+      const amount = Number(op.amount)
+      if (!Number.isFinite(amount)) continue
+      if (op.type === 'income') income += amount
+      else expense += amount
     }
-    return { income, expense, balance: income - expense }
+    // Защита от Infinity при аномальных данных
+    const safe = (n) => (Number.isFinite(n) ? n : 0)
+    return {
+      income: safe(income),
+      expense: safe(expense),
+      balance: safe(income - expense),
+    }
   }, [operations, month])
 
   return (
@@ -40,20 +50,25 @@ export function Summary({ operations, month }) {
         <p className="summary__label">Баланс за месяц</p>
         <p
           className={
-            'summary__value ' +
+            'summary__value money ' +
             (balance >= 0 ? 'is-plus' : 'is-minus')
           }
+          title={String(balance)}
         >
           {formatMoney(balance)}
         </p>
       </article>
       <article className="summary__card reveal delay-1">
         <p className="summary__label">Доходы</p>
-        <p className="summary__value is-plus">{formatMoney(income)}</p>
+        <p className="summary__value money is-plus" title={String(income)}>
+          {formatMoney(income)}
+        </p>
       </article>
       <article className="summary__card reveal delay-2">
         <p className="summary__label">Расходы</p>
-        <p className="summary__value is-minus">{formatMoney(expense)}</p>
+        <p className="summary__value money is-minus" title={String(expense)}>
+          {formatMoney(expense)}
+        </p>
       </article>
     </section>
   )
@@ -114,7 +129,9 @@ export function CategoryChart({ operations, month }) {
             <li key={item.name}>
               <span style={{ background: item.color }} />
               {item.name}
-              <strong>{formatMoney(item.value)}</strong>
+              <strong className="money" title={String(item.value)}>
+                {formatMoney(item.value)}
+              </strong>
             </li>
           ))}
         </ul>
@@ -134,15 +151,20 @@ export function TransactionForm({ onAdd }) {
 
   function submit(e) {
     e.preventDefault()
-    const num = Number(String(amount).replace(',', '.'))
-    if (!num || num <= 0) {
-      setError('Введите сумму больше 0')
+    const num = parseAmount(amount)
+    if (num == null) {
+      const raw = Number(String(amount).replace(',', '.'))
+      if (Number.isFinite(raw) && raw > MAX_AMOUNT) {
+        setError(`Сумма не больше ${formatMoney(MAX_AMOUNT)}`)
+      } else {
+        setError('Введите сумму больше 0')
+      }
       return
     }
     onAdd({
       id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
       type,
-      amount: Math.round(num),
+      amount: num,
       category,
       date,
       comment: comment.trim(),
@@ -152,6 +174,15 @@ export function TransactionForm({ onAdd }) {
     setError('')
     setOk(true)
     setTimeout(() => setOk(false), 1200)
+  }
+
+  function onAmountChange(e) {
+    const next = e.target.value
+    // Блокируем научную запись и лишние цифры ещё на вводе
+    if (next === '' || /^\d{0,12}([.,]\d{0,2})?$/.test(next)) {
+      setAmount(next)
+      if (error) setError('')
+    }
   }
 
   return (
@@ -178,13 +209,18 @@ export function TransactionForm({ onAdd }) {
       <label className="field">
         <span>Сумма, ₽</span>
         <input
-          type="number"
-          min="1"
-          step="1"
+          type="text"
+          inputMode="decimal"
+          autoComplete="off"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          onChange={onAmountChange}
           placeholder="0"
+          maxLength={15}
+          aria-describedby="amount-hint"
         />
+        <span id="amount-hint" className="field__hint">
+          До {formatMoney(MAX_AMOUNT)}
+        </span>
       </label>
 
       <label className="field">
@@ -270,9 +306,10 @@ export function TransactionList({ operations, month, onDelete }) {
               </div>
               <p
                 className={
-                  'list__amount ' +
+                  'list__amount money ' +
                   (op.type === 'income' ? 'is-plus' : 'is-minus')
                 }
+                title={String(op.amount)}
               >
                 {op.type === 'income' ? '+' : '−'}
                 {formatMoney(op.amount)}

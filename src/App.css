@@ -216,6 +216,10 @@ a.nav-link {
 
 .summary__card {
   padding: 18px 20px;
+  min-width: 0;
+  overflow: hidden;
+  container-type: inline-size;
+  container-name: summary-card;
   transition: transform 0.25s ease, border-color 0.2s;
 }
 
@@ -256,10 +260,19 @@ a.nav-link {
 .summary__value {
   margin: 0;
   font-family: 'Unbounded', sans-serif;
-  font-size: clamp(1.25rem, 2.5vw, 1.7rem);
+  font-size: clamp(0.95rem, 7.5cqi, 1.7rem);
   font-weight: 700;
   letter-spacing: -0.02em;
   position: relative;
+  line-height: 1.2;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  font-variant-numeric: tabular-nums;
+}
+
+.money {
+  font-variant-numeric: tabular-nums;
 }
 
 .is-plus {
@@ -277,7 +290,7 @@ a.nav-link {
 
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 14px;
   margin-bottom: 14px;
 }
@@ -342,6 +355,11 @@ a.nav-link {
   color: var(--muted);
 }
 
+.field__hint {
+  font-size: 0.75rem;
+  color: rgba(155, 176, 165, 0.75);
+}
+
 .field select option {
   color: #14241f;
 }
@@ -396,7 +414,7 @@ a.nav-link {
 
 .chart-box {
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   gap: 8px;
   align-items: center;
 }
@@ -415,15 +433,17 @@ a.nav-link {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: 0;
 }
 
 .chart-legend li {
   display: grid;
-  grid-template-columns: 10px 1fr auto;
+  grid-template-columns: 10px minmax(0, 1fr) minmax(0, auto);
   gap: 8px;
   align-items: center;
   font-size: 0.84rem;
   color: var(--muted);
+  min-width: 0;
 }
 
 .chart-legend span {
@@ -436,6 +456,10 @@ a.nav-link {
   color: var(--ink);
   font-weight: 700;
   font-size: 0.82rem;
+  text-align: right;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .chart-empty,
@@ -457,7 +481,7 @@ a.nav-link {
 
 .list__item {
   display: grid;
-  grid-template-columns: 12px 1fr auto auto;
+  grid-template-columns: 12px minmax(0, 1fr) minmax(4.5rem, auto) auto;
   gap: 12px;
   align-items: center;
   padding: 12px 14px;
@@ -465,6 +489,7 @@ a.nav-link {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--line);
   transition: background 0.15s, border-color 0.15s;
+  min-width: 0;
 }
 
 .list__item:hover {
@@ -489,10 +514,15 @@ a.nav-link {
   border-radius: 50%;
 }
 
+.list__main {
+  min-width: 0;
+}
+
 .list__title {
   margin: 0;
   font-weight: 700;
   font-size: 0.95rem;
+  overflow-wrap: anywhere;
 }
 
 .list__comment {
@@ -510,7 +540,12 @@ a.nav-link {
   margin: 0;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+  text-align: right;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-height: 1.2;
+  font-size: clamp(0.78rem, 2.4vw, 0.98rem);
 }
 
 .list__del {

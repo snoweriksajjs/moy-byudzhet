@@ -9,13 +9,34 @@ export const CATEGORIES = [
   { id: 'other', name: 'Другое', color: '#6c757d' },
 ]
 
+/** Верхний предел суммы одной операции — чтобы UI и Number не ломались */
+export const MAX_AMOUNT = 999_999_999_999
+
 const KEY = 'finance_ops_v1'
+
+function clampAmount(n) {
+  const value = Math.round(Number(n))
+  if (!Number.isFinite(value) || value <= 0) return null
+  return Math.min(value, MAX_AMOUNT)
+}
+
+function sanitizeOperations(list) {
+  if (!Array.isArray(list)) return getDemoData()
+  return list
+    .map((op) => {
+      if (!op || typeof op !== 'object') return null
+      const amount = clampAmount(op.amount)
+      if (amount == null) return null
+      return { ...op, amount }
+    })
+    .filter(Boolean)
+}
 
 export function loadOperations() {
   try {
     const raw = localStorage.getItem(KEY)
     if (!raw) return getDemoData()
-    return JSON.parse(raw)
+    return sanitizeOperations(JSON.parse(raw))
   } catch {
     return getDemoData()
   }
@@ -23,6 +44,20 @@ export function loadOperations() {
 
 export function saveOperations(list) {
   localStorage.setItem(KEY, JSON.stringify(list))
+}
+
+/** Разбор суммы из поля ввода. null — невалидно или слишком большая. */
+export function parseAmount(raw) {
+  const cleaned = String(raw ?? '')
+    .trim()
+    .replace(/\s/g, '')
+    .replace(',', '.')
+  if (!cleaned || /[eE]/.test(cleaned)) return null
+  const num = Number(cleaned)
+  if (!Number.isFinite(num) || num <= 0) return null
+  const rounded = Math.round(num)
+  if (rounded > MAX_AMOUNT) return null
+  return rounded
 }
 
 function getDemoData() {
@@ -74,11 +109,26 @@ function getDemoData() {
 }
 
 export function formatMoney(n) {
+  const value = Number(n)
+  if (!Number.isFinite(value)) return '—'
+
+  const abs = Math.abs(value)
+  // Компактная запись для миллиардов+, чтобы длинные числа не раздували карточки
+  if (abs >= 1_000_000_000) {
+    return new Intl.NumberFormat('ru-RU', {
+      style: 'currency',
+      currency: 'RUB',
+      notation: 'compact',
+      compactDisplay: 'short',
+      maximumFractionDigits: 1,
+    }).format(value)
+  }
+
   return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency: 'RUB',
     maximumFractionDigits: 0,
-  }).format(n)
+  }).format(value)
 }
 
 export function monthKey(dateStr) {
